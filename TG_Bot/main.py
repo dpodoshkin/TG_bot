@@ -55,7 +55,7 @@ def get_mess(message):
         btn11 = types.KeyboardButton('Водолей (Aquarius)')
         btn12 = types.KeyboardButton('Рыбы (Pisces)')
         markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12)
-        final_mess = 'Не понимаю'
+        final_mess = 'Выдаю гороскоп на месяц'
     bot.send_message(message.chat.id, final_mess, parse_mode='html', reply_markup=markup)
 
 # @bot.message_handler(commands=['website'])
