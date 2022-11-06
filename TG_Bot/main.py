@@ -1,6 +1,8 @@
 import telebot
-
 from telebot import types
+import requests
+from bs4 import BeautifulSoup
+
 TOKEN = None
 
 with open("token.txt") as f:
@@ -11,67 +13,126 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    chat_id = message.chat.id
+    first_name = message.chat.first_name
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1 = types.KeyboardButton('Гороскоп на сегодня')
-    btn2 = types.KeyboardButton('Гороскоп на месяц')
-    markup.add(btn1,btn2)
-    mess = f'Привет, {message.from_user.first_name}!'
-    bot.send_message(message.chat.id, mess, parse_mode='html',reply_markup=markup)
+    btn1 = types.KeyboardButton('Овен')
+    btn2 = types.KeyboardButton('Телец')
+    btn3 = types.KeyboardButton('Близнецы')
+    btn4 = types.KeyboardButton('Рак')
+    btn5 = types.KeyboardButton('Лев')
+    btn6 = types.KeyboardButton('Дева')
+    btn7 = types.KeyboardButton('Весы')
+    btn8 = types.KeyboardButton('Скорпион')
+    btn9 = types.KeyboardButton('Стрелец')
+    btn10 = types.KeyboardButton('Козерог')
+    btn11 = types.KeyboardButton('Водолей')
+    btn12 = types.KeyboardButton('Рыбы')
+    markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12)
+    bot.send_message(chat_id, f'Привет, {first_name}!\n'
+                     'Выбери свой знак зодиака', parse_mode='html',reply_markup=markup)
 
 
 @bot.message_handler(content_types=['text'])
 def get_mess(message):
-    get_message_bot = message.text.strip().lower()
+    chat_id = message.chat.id
+    if message.chat.type == 'private':
+        if message.text == 'Овен':
+            url = 'https://7days.ru/astro/horoscope/aries/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
 
-    if get_message_bot == 'гороскоп на сегодня':
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=6)
-        btn1 = types.KeyboardButton('Овен (Aries)')
-        btn2 = types.KeyboardButton('Телец (Taurus)')
-        btn3 = types.KeyboardButton('Близнецы (Gemini)')
-        btn4 = types.KeyboardButton('Рак (Cancer)')
-        btn5 = types.KeyboardButton('Лев (Leo)')
-        btn6 = types.KeyboardButton('Дева (Virgo)')
-        btn7 = types.KeyboardButton('Весы (Libra)')
-        btn8 = types.KeyboardButton('Скорпион (Scorpio)')
-        btn9 = types.KeyboardButton('Стрелец (Sagittarius)')
-        btn10 = types.KeyboardButton('Козерог (Capricorn)')
-        btn11 = types.KeyboardButton('Водолей (Aquarius)')
-        btn12 = types.KeyboardButton('Рыбы (Pisces)')
-        markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12)
-        final_mess = 'Выдаю гороскоп на сегодня'
+        if message.text == 'Телец':
+            url = 'https://7days.ru/astro/horoscope/taurus/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
 
-    else:
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=6)
-        btn1 = types.KeyboardButton('Овен (Aries)')
-        btn2 = types.KeyboardButton('Телец (Taurus)')
-        btn3 = types.KeyboardButton('Близнецы (Gemini)')
-        btn4 = types.KeyboardButton('Рак (Cancer)')
-        btn5 = types.KeyboardButton('Лев (Leo)')
-        btn6 = types.KeyboardButton('Дева (Virgo)')
-        btn7 = types.KeyboardButton('Весы (Libra)')
-        btn8 = types.KeyboardButton('Скорпион (Scorpio)')
-        btn9 = types.KeyboardButton('Стрелец (Sagittarius)')
-        btn10 = types.KeyboardButton('Козерог (Capricorn)')
-        btn11 = types.KeyboardButton('Водолей (Aquarius)')
-        btn12 = types.KeyboardButton('Рыбы (Pisces)')
-        markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12)
-        final_mess = 'Выдаю гороскоп на месяц'
-    bot.send_message(message.chat.id, final_mess, parse_mode='html', reply_markup=markup)
+        if message.text == 'Близнецы':
+            url = 'https://7days.ru/astro/horoscope/gemini/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
 
-# @bot.message_handler(commands=['website'])
-# def website(message):
-#     markup = types.InlineKeyboardMarkup()
-#     markup.add(types.InlineKeyboardButton('Посетить сайт', url='https://www.google.ru'))
-#     bot.send_message(message.chat.id, 'Открывай ссылку', parse_mode='html', reply_markup=markup)
-#
-#
-# @bot.message_handler(commands=['help'])
-# def website(message):
-#     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-#     website = types.KeyboardButton('/website')
-#     start = types.KeyboardButton('/start')
-#     markup.add(website, start)
-#     bot.send_message(message.chat.id, 'Иди в гугл', reply_markup=markup)
+        if message.text == 'Рак':
+            url = 'https://7days.ru/astro/horoscope/cancer/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
+
+        if message.text == 'Лев':
+            url = 'https://7days.ru/astro/horoscope/leo/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
+
+        if message.text == 'Дева':
+            url = 'https://7days.ru/astro/horoscope/virgo/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
+
+        if message.text == 'Весы':
+            url = 'https://7days.ru/astro/horoscope/libra/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
+
+        if message.text == 'Скорпион':
+            url = 'https://7days.ru/astro/horoscope/scorpio/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
+
+        if message.text == 'Стрелец':
+            url = 'https://7days.ru/astro/horoscope/sagittarius/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
+
+        if message.text == 'Козерог':
+            url = 'https://7days.ru/astro/horoscope/capricorn/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
+
+        if message.text == 'Водолей':
+            url = 'https://7days.ru/astro/horoscope/aquarius/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
+
+        if message.text == 'Рыбы':
+            url = 'https://7days.ru/astro/horoscope/pisces/today'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            section = soup.find('div', class_='horoscope-7days')
+            prophecy = section.find('div', class_='horoscope-7days__content_text').get_text(strip=True)
+            bot.send_message(chat_id, prophecy)
+
 
 
 bot.polling(none_stop=True)
